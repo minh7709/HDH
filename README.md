@@ -132,3 +132,42 @@ int main() {
 }
 
 ```
+
+```bash
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    pid_t pid = fork();
+
+    if (pid < 0) {
+        perror("Fork failed");
+        exit(1);
+    }
+
+    if (pid == 0) {
+        // Tiến trình con
+        printf("Child process running...\n");
+        exit(5); // Trả về mã lỗi 5
+    } else {
+        // Tiến trình cha
+        int status;
+        wait(&status); // Chờ tiến trình con kết thúc
+
+        if (WIFEXITED(status)) {
+            // Nếu tiến trình con kết thúc bình thường
+            int exit_code = WEXITSTATUS(status);
+            printf("Child exited with status: %d\n", exit_code);
+        } else {
+            // Nếu tiến trình con không kết thúc bình thường
+            printf("Child did not exit normally.\n");
+        }
+    }
+
+    return 0;
+}
+
+```
